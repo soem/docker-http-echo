@@ -12,7 +12,7 @@ def self.route(*methods, path, &block)
   end
 end
 
-route :get, :post, :delete, :patch, :put, :head, :options, '/' do
+route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
   content_type 'text/plain'
 
   if request.env['QUERY_STRING'] == ''
