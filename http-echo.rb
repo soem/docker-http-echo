@@ -4,6 +4,7 @@ require 'yaml'
 
 set :bind, '0.0.0.0'
 set :port, ENV['HTTP_PORT']
+ADDTION_RESPONSE = ENV['ADDTION_RESPONSE']
 
 def self.route(*methods, path, &block)
   methods.each do |method|
@@ -26,14 +27,16 @@ route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
   headers = Hash.new
   header_keys = request.env.keys.select {|k| k[/^HTTP_.*$/] }.reject {|k| k == 'HTTP_VERSION'}
   header_keys.each do |key|
-    tokens = key.split("_")[1..-1].map {|t| t.capitalize! }
+    tokens = key.split("_")[1..-1].map {|t| t.capitalize }
     headers[key] = tokens.join("-")
   end
 
   header_keys = ['CONTENT_TYPE', 'CONTENT_LENGTH']
   header_keys.each do |key|
-    tokens = key.split("_").map {|t| t.capitalize! }
-    headers[key] = tokens.join("-")
+    if request.env.has_key? key
+      tokens = key.split("_").map {|t| t.capitalize }
+      headers[key] = tokens.join("-")
+    end
   end
 
   return_value = Array.new
@@ -41,6 +44,7 @@ route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
   headers.each do |key, header|
     return_value.push "#{header}: #{request.env[key]}"
   end
+  return_value.push ADDTION_RESPONSE if ADDTION_RESPONSE
   return_value.push ''
 
   return_value.join("\n")
