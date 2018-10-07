@@ -4,7 +4,7 @@ require 'yaml'
 
 set :bind, '0.0.0.0'
 set :port, ENV['HTTP_PORT']
-ADDTION_RESPONSE = ENV['ADDTION_RESPONSE']
+ADDITION_RESPONSE = ENV['ADDITION_RESPONSE']
 
 def self.route(*methods, path, &block)
   methods.each do |method|
@@ -44,7 +44,7 @@ route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
   headers.each do |key, header|
     return_value.push "#{header}: #{request.env[key]}"
   end
-  return_value.push ADDTION_RESPONSE if ADDTION_RESPONSE
+  return_value.push ADDITION_RESPONSE if ADDITION_RESPONSE
   return_value.push ''
 
   return_value.join("\n")
