@@ -1,9 +1,10 @@
 FROM ruby:2.5-alpine
 
+STOPSIGNAL SIGKILL
 ENV HTTP_PORT=80
 
 RUN \
-    gem install sinatra --no-ri --no-rdoc
+    gem install sinatra --no-document
 
 COPY http-echo.rb /opt/http-echo.rb
 
