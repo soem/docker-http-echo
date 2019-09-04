@@ -6,7 +6,6 @@ set :bind, '0.0.0.0'
 set :port, ENV['HTTP_PORT']
 ADDITION_RESPONSE = ENV['ADDITION_RESPONSE']
 HTTP_ECHO_STATUS = 'HTTP_X_ECHO_STATUS'
-status = 200
 
 def self.route(*methods, path, &block)
   methods.each do |method|
@@ -16,6 +15,7 @@ def self.route(*methods, path, &block)
 end
 
 route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
+  status = 200
   content_type 'text/plain'
 
   if request.env['QUERY_STRING'] == ''
@@ -31,9 +31,7 @@ route :get, :post, :delete, :patch, :put, :head, :options, '/*' do
   header_keys.each do |key|
     tokens = key.split("_")[1..-1].map {|t| t.capitalize }
     headers[key] = tokens.join("-")
-    if key == HTTP_ECHO_STATUS
-      status = request.env[key].to_i if request.env[key].to_i > status
-    end
+    status = request.env[key].to_i if key == HTTP_ECHO_STATUS and request.env[key].to_i > status
   end
 
   header_keys = ['CONTENT_TYPE', 'CONTENT_LENGTH']
